@@ -26,3 +26,9 @@ topLevel x = x + woot
     where
         woot :: Integer
         woot = 4
+
+top :: Integer-> Integer
+top x = x + y 
+ where 
+    y :: Integer
+    y = 4
