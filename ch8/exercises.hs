@@ -20,8 +20,15 @@ suma n = go n 0
             False -> go (n - 1) (total + n)
 
 recMul :: (Integral a) => a -> a -> a
-recMul 1 y = y
-recMul 0 y = 0
-recMul x 1 = x
-recMul x 0 = 0
-recMul x y = recMul (x - 1) (y + y)
+recMul x y = go x y y
+    where
+        go 0 y _ = 0
+        go 1 y _ = y
+        go x 1 _ = x
+        go x 0 _ = 0
+        go x y c = go (x - 1) (y + c) c
+
+mc91 :: (Num a, Ord a) => a -> a
+mc91 n
+    | n > 100 = n - 10
+    | otherwise = mc91 (mc91 (n + 11))
