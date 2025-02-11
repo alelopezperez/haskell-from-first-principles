@@ -31,4 +31,4 @@ arith ::
     )
 arith f num a = f a + fromInteger num
 
-instance Yeah
+data Rock a = Rocka Int | To a
