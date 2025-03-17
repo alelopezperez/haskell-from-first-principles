@@ -6,6 +6,9 @@ lefts' (x : xs) = case x of
     Left a -> a : lefts' xs
     Right b -> lefts' xs
 
+algo :: String -> Bool
+algo _ =
+    True
 lefti :: [Either a b] -> [a]
 lefti =
     foldr
