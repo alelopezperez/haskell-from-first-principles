@@ -2,6 +2,7 @@ module Addition where
 
 import Test.Hspec
 import Test.QuickCheck
+import Test.QuickCheck.Gen (oneof)
 
 genBool :: Gen Bool
 genBool = choose (False, True)
@@ -87,3 +88,75 @@ mulRec :: (Eq a, Num a) => a -> a -> a
 mulRec _ 0 = 0
 mulRec 0 _ = 0
 mulRec x y = x + mulRec x (y - 1)
+
+-- Trivial Case
+data Trivial = Trivial deriving (Eq, Show)
+
+trivialGen :: Gen Trivial
+trivialGen = return Trivial
+
+instance Arbitrary Trivial where
+    arbitrary = trivialGen
+
+-- Identity parametric polymorph
+data Identity a
+    = Identity a
+    deriving (Eq, Show)
+
+identityGen :: (Arbitrary a) => Gen (Identity a)
+identityGen = do
+    a <- arbitrary
+    return (Identity a)
+
+instance (Arbitrary a) => Arbitrary (Identity a) where
+    arbitrary = identityGen
+
+identityGenInt :: Gen (Identity Int)
+identityGenInt = identityGen
+
+identityGenTriv :: Gen (Identity Trivial)
+identityGenTriv = identityGen
+
+-- Product Case
+
+data Pair a b
+    = Pair a b
+    deriving (Eq, Show)
+
+pairGen :: (Arbitrary a, Arbitrary b) => Gen (Pair a b)
+pairGen = do
+    a <- arbitrary
+    b <- arbitrary
+    return (Pair a b)
+
+instance (Arbitrary a, Arbitrary b) => Arbitrary (Pair a b) where
+    arbitrary = pairGen
+
+pairGenIntString :: Gen (Pair Int String)
+pairGenIntString = pairGen
+
+-- Sum Type Case
+
+data Sum a b
+    = First a
+    | Second b
+    deriving (Show, Eq)
+
+sumGenEqual :: (Arbitrary a, Arbitrary b) => Gen (Sum a b)
+sumGenEqual = do
+    a <- arbitrary
+    b <- arbitrary
+    oneof [return $ First a, return $ Second b]
+sumGenCharInt :: Gen (Sum Char Int)
+sumGenCharInt = sumGenEqual
+
+--      Frequency Case
+
+sumGenFirstPls :: (Arbitrary a, Arbitrary b) => Gen (Sum a b)
+sumGenFirstPls = do
+    a <- arbitrary
+    b <- arbitrary
+    frequency [(10, return $ First a), (1, return $ Second b)]
+
+sumGenCharIntFirst :: Gen (Sum Char Int)
+sumGenCharIntFirst = sumGenFirstPls

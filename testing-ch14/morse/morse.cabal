@@ -49,7 +49,7 @@ executable morse
   default-language:
     Haskell2010
 
-test-suite test
+test-suite tests
   ghc-options:
     -Wall
     -fno-warn-orphans
